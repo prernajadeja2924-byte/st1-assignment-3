@@ -112,3 +112,73 @@ def test_rejected_practitioner_lookup_preserves_record():
         service.find_practitioner("D999")
 
     assert service.find_practitioner("D001") is original
+
+
+from datetime import datetime, timedelta
+
+from smartcare.domain import AppointmentStatus
+from smartcare.services import AppointmentService
+
+
+def  cancellation_setup():
+    store = SmartCareDataStore()
+
+    patient = PatientService(store).register_patient(
+        "P001", "Alex Smith"
+    )
+    practitioner = PractitionerService(store).register_practitioner(
+        "D001", "Taylor Smith", "General"
+    )
+
+    service = AppointmentService(store)
+    appointment = service.book_appointment(
+        "A001",
+        patient.patient_id,
+        practitioner.practitioner_id,
+        (datetime.now() + timedelta(days=7)).replace(second=0, microsecond=0)
+    )
+
+    return service, store, appointment
+
+
+def test_cancel_scheduled_appointment():
+    service, store, appointment = cancellation_setup()
+
+    result = service.cancel_appointment("A001")
+
+    assert result is appointment
+    assert result.status == AppointmentStatus.CANCELLED
+
+
+def test_cancelled_appointment_remains_in_history():
+    service, store, appointment = cancellation_setup()
+
+    service.cancel_appointment("A001")
+
+    assert store.find_appointment("A001") is appointment
+    assert appointment.status == AppointmentStatus.CANCELLED
+
+
+def test_cancel_unknown_appointment():
+    service, store, appointment = cancellation_setup()
+
+    with pytest.raises(LookupError):
+        service.cancel_appointment("A999")
+
+
+def test_cancel_blank_appointment_id():
+    service, store, appointment = cancellation_setup()
+
+    with pytest.raises(ValueError):
+        service.cancel_appointment("   ")
+
+
+def test_cannot_cancel_twice():
+    service, store, appointment = cancellation_setup()
+
+    service.cancel_appointment("A001")
+
+    with pytest.raises(ValueError):
+        service.cancel_appointment("A001")
+
+    assert appointment.status == AppointmentStatus.CANCELLED
