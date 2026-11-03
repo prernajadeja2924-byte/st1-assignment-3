@@ -318,7 +318,8 @@ Unresolved issue or none: Independent peer review, GitHub Copilot comparison, pu
 
 Stage 7 handover status: Unresolved work. All three Stage 6 service implementations and their automated tests are complete, but review and integration requirements remain outstanding.
 
-Final submitted SHA if later than tested SHA: Pending. The final documentation commit may differ from the tested code SHA because the Stage 6 evidence file is being updated after the code was tested.
+- Final submitted SHA if later than tested SHA: 3575ee0a78f3f0458b79c5cd1de6b7f1659f6904
+- Evidence-only difference: This commit records the Stage 6 documentation updates after the original implementation commit. The full test suite was rerun successfully after the documentation commit, with 23 tests passing.
 
 - [x] Three Stage 6 service targets completed and checked.
 - [x] Original supplied tests retained and passing.
