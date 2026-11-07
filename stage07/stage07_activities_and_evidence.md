@@ -473,74 +473,173 @@ Before accepting: traces to a requirement/criterion; can fail for the right reas
 Run python -m pytest from project/. Retain all accumulated tests. Record the tested SHA accurately.
 
 | Command | Working directory | Code SHA | Passed | Failed | Failure summary | Product defect / test defect / unresolved | Evidence and interpretation |
-|---|---|---|---|---|---|---|---|
-| [complete] | [complete] | [complete] | [complete] | [complete] | [complete] | [complete] | [complete] |
 
-Individual test runs and changed-order independence evidence: [commands, results, links]
-Optional tutor-led demonstration notes: [optional; leave blank if not used]
-A meaningful test should detect a relevant incorrect result. Students do not have to perform the demonstration or submit failure/restoration evidence for assessment. The tutor restores the example and reruns its tests. This is not a Stage 8 fault activity.
-Requirement → test → failure/observation → diagnosis → change → verification: [concise links where applicable]
+The complete SmartCare pytest suite was executed from the `project/` directory after adding the new appointment cancellation boundary test.
+
+| Command | Working directory | Code SHA | Passed | Failed | Failure summary | Product defect / test defect / unresolved | Evidence and interpretation |
+|---|---|---|---|---|---|---|---|
+| `python -m pytest` | `project/` | `59111c6` (short SHA) | 24 | 0 | No failures in the final run | No product or test defects observed in the final run | Full regression suite passed after the new test was committed |
+| `python -m pytest tests/test_services.py::test_cannot_cancel_completed_appointment -v` | `project/` | Pre-commit working version; SHA not recorded | 1 | 0 | No failures | No defect observed | Verified that cancellation of a completed appointment raises `ValueError`, preserves `COMPLETED` status and retains the stored object |
+| `python -m pytest` | `project/` | Pre-commit working version; SHA not recorded | Not completed | Not applicable | Test collection interrupted by `UnicodeDecodeError` while reading `test_list.txt` | Test collection/environment issue, subsequently resolved | The temporary text file was removed and the full suite was rerun successfully |
+
+**Individual test runs and changed-order independence evidence:**
+
+The completed-appointment cancellation test was executed individually and passed.
+
+Command: `python -m pytest tests/test_services.py::test_cannot_cancel_completed_appointment -v`
+
+Result: `1 passed in 0.14s`.
+
+The complete suite was then run using `python -m pytest`, reporting 24 passed.
+
+Changed-order independence has not yet been tested separately.
+
+**Optional tutor-led demonstration notes:** Not used.
+
+**Requirement → test → failure/observation → diagnosis → change → verification:**
+
+FR-06 – Appointment cancellation → `test_cannot_cancel_completed_appointment` → The existing tests did not explicitly cover cancellation of an appointment already in `COMPLETED` status → GitHub Copilot suggested this missing boundary case → I verified the domain model and added a test checking `ValueError`, unchanged status and retained storage → The individual test passed and the full regression suite reported 24 passed.
+
+**Integration note:** The verified code is currently on `feature/appointment-cancellation`. Integration into `main` has not yet been confirmed. The full tested commit SHA still needs to be recorded.
+
+**Individual test runs and changed-order independence evidence:**
+
+1. **Individual test execution**
+
+   Command: `python -m pytest tests/test_services.py::test_cannot_cancel_completed_appointment -v`
+
+   Result: 1 test passed in 0.14 seconds.
+
+2. **Full regression execution**
+
+   Command: `python -m pytest`
+
+   Result: 24 tests passed in 0.19 seconds.
+
+3. **Changed-order execution**
+
+   Command: `python -m pytest tests/test_starter.py tests/test_services.py`
+
+   Result: 24 tests passed.
+
+**Interpretation:** All 24 tests passed when the supplied test file was executed before the service test file. This provides evidence that the suite does not depend on the original file execution order. It does not prove independence under every possible test ordering.
+
+**Tested commit:** `59111c6f201c249dd6edc5f088af12076ddbc18b`
+
+**Branch:** `feature/appointment-cancellation`
+
+**Integration status:** Not yet verified on `main`.
 
 ## K What the Suite Still Does Not Prove
 
-What does your test suite still not prove? [response]
-Coverage if used: [result or not used]
-Which uncovered areas matter, and why does coverage percentage alone not establish correctness? [response]
-Optional fixtures/parametrisation used and why, if any: [response or not used]
+**What does your test suite still not prove?**
+
+Although all 24 tests passed, the suite does not prove that SmartCare is completely free from defects. It verifies selected behaviours, including registration, lookup, booking, cancellation and preservation of stored records.
+
+Some boundary cases remain untested, including additional invalid field values and state preservation after certain rejected operations. The suite also does not establish complete acceptance-criterion coverage because the official revision 2 acceptance criterion IDs have not yet been verified.
+
+**Coverage if used:**
+
+Not used. No code-coverage percentage was measured.
+
+**Which uncovered areas matter, and why does coverage percentage alone not establish correctness?**
+
+Important areas for additional testing include whitespace-only names, invalid appointment inputs, preservation of existing bookings after scheduling conflicts and unchanged appointment state after unsuccessful cancellation attempts.
+
+These areas matter because the application should reject invalid operations without modifying valid stored information.
+
+A high coverage percentage only shows that code was executed during testing. It does not prove that the tests contain strong assertions, check correct outcomes or cover all required boundary conditions. Even 100% coverage can coexist with incorrect application behaviour.
+
+**Optional fixtures/parametrisation used and why, if any:**
+
+No pytest fixtures or parametrisation were used in the reviewed tests.
+
+Instead, the supplied tests use a `foundation()` helper function to create fresh registered participants and services. The student-authored tests use a `cancellation_setup()` helper function to prepare appointments for cancellation testing.
+
+These helper functions reduce repeated setup code and help keep test data independent between tests.
 
 ## L Git and Review Evidence
 
-Use links rather than copying GitHub history. Continue the Stage 6 workflow; no commit/PR count, conflict or individual test quota is imposed.
+The following table records the GitHub issues, feature branches and pull requests created during the SmartCare Stage 6 and Stage 7 workflow.
 
 | Issue/task | Branch | PR | Reviewer | Key feedback | Outcome |
 |---|---|---|---|---|---|
-| [complete] | [complete] | [complete] | [complete] | [complete] | [complete] |
+| [Issue #1 – Patient lookup](https://github.com/prernajadeja2924-byte/st1-assignment-3/issues/1) | `feature/patient-lookup` | [PR #3](https://github.com/prernajadeja2924-byte/st1-assignment-3/pull/3) | Independent reviewer not confirmed | No verified reviewer feedback recorded | Implementation and tests prepared; merge not confirmed |
+| Practitioner lookup | `feature/practitioner-lookup` | [PR #4](https://github.com/prernajadeja2924-byte/st1-assignment-3/pull/4) | Independent reviewer not confirmed | No verified reviewer feedback recorded | Implementation and tests prepared; merge not confirmed |
+| [Issue #2 – Appointment cancellation](https://github.com/prernajadeja2924-byte/st1-assignment-3/issues/2) | `feature/appointment-cancellation` | [PR #5](https://github.com/prernajadeja2924-byte/st1-assignment-3/pull/5) | Independent reviewer not confirmed | No verified reviewer feedback recorded | Cancellation and history tests implemented; merge not confirmed |
+| Stage 7 – Additional cancellation boundary test and regression evidence | `feature/appointment-cancellation` | [PR #5](https://github.com/prernajadeja2924-byte/st1-assignment-3/pull/5) | GitHub Copilot provided a test-design suggestion; not an independent PR reviewer | Suggested testing cancellation of a completed appointment; domain API checked before implementation | New test passed; full regression suite reported 24 passed; integration pending |
+
+**Stage 7 verification commit:** `59111c6f201c249dd6edc5f088af12076ddbc18b`
+
+**Review and integration status:** The pull requests have been created, but independent approval and merging into `main` have not been verified. The Stage 7 test result relates to the feature branch rather than an integrated `main` version.
+
+**Additional documentation:** Section J and Section K updates made after the verification commit still need to be committed and pushed.
 
 ## M Contribution Evidence
 
-Record actual work in test design, implementation, review, traceability, diagnosis, necessary fixes and integration. Do not include confidential peer ratings.
+The SmartCare assignment work recorded below was completed individually. The contributions include implementation, test design, execution, diagnosis, traceability and GitHub documentation. No independent peer review or group integration contribution is claimed.
 
 | Member | Actual contribution | Evidence link |
 |---|---|---|
-| [complete] | [complete] | [complete] |
+| Prerna Jadeja | Implemented and tested patient lookup, including valid, invalid and unknown identifier scenarios. | [PR #3 – Patient Lookup](https://github.com/prernajadeja2924-byte/st1-assignment-3/pull/3) |
+| Prerna Jadeja | Implemented and tested practitioner lookup, including successful retrieval and invalid identifier handling. | [PR #4 – Practitioner Lookup](https://github.com/prernajadeja2924-byte/st1-assignment-3/pull/4) |
+| Prerna Jadeja | Implemented and tested appointment cancellation, including successful cancellation, repeated cancellation, unknown identifiers and retained appointment history. | [PR #5 – Appointment Cancellation](https://github.com/prernajadeja2924-byte/st1-assignment-3/pull/5) |
+| Prerna Jadeja | Reviewed a GitHub Copilot test-design suggestion, checked it against the existing domain rules and added a negative test for cancelling a completed appointment. | [Stage 7 commit](https://github.com/prernajadeja2924-byte/st1-assignment-3/commit/59111c6f201c249dd6edc5f088af12076ddbc18b) |
+| Prerna Jadeja | Executed targeted and full regression tests, investigated a test-collection encoding issue, verified 24 passing tests and repeated execution with changed test-file order. | [Stage 7 evidence file](https://github.com/prernajadeja2924-byte/st1-assignment-3/blob/feature/appointment-cancellation/stage07/stage07_activities_and_evidence.md) |
+| Prerna Jadeja | Prepared requirement traceability, test-design explanations, test evidence and limitations documentation. Created GitHub issues, feature branches and pull requests. | [GitHub repository](https://github.com/prernajadeja2924-byte/st1-assignment-3) |
+
+**Contribution and review status:** All contributions listed above were completed individually. No independent reviewer approval or integration into `main` has been confirmed. The Stage 7 documentation updates still require a final commit and push.
 
 ## N Formative Questions
 
-1. What question does verification answer?
-[response]
+**1. What question does verification answer?**
 
-2. What question does validation answer?
-[response]
+Verification answers the question: "Are we building the product correctly?" It checks whether the software implementation follows its specified requirements, design and technical rules.
 
-3. What is a unit test?
-[response]
+**2. What question does validation answer?**
 
-4. What is a pytest fixture?
-[response]
+Validation answers the question: "Are we building the correct product?" It checks whether the software meets the intended needs and expectations of its users and stakeholders.
 
-5. What is parametrisation in pytest?
-[response]
+**3. What is a unit test?**
 
-6. What is regression testing?
-[response]
+A unit test checks a small, individual part of a program, such as a method or function, to verify that it produces the expected result. In SmartCare, the tests for `PatientService.find_patient()` and `AppointmentService.cancel_appointment()` are examples of unit-level tests.
 
-7. What does code coverage tell us, and what does it not prove?
-[response]
+**4. What is a pytest fixture?**
 
-8. What makes an assertion weak?
-[response]
+A pytest fixture is a reusable setup mechanism that provides test data, objects or resources to test functions. Fixtures are commonly created using the `@pytest.fixture` decorator and help reduce repeated setup code.
 
-9. What is the appropriate role of GitHub Copilot as a test assistant?
-[response]
+**5. What is parametrisation in pytest?**
+
+Parametrisation allows the same test function to run multiple times using different input values and expected outcomes. In pytest, this can be implemented using `@pytest.mark.parametrize`. It helps test multiple scenarios without duplicating test functions.
+
+**6. What is regression testing?**
+
+Regression testing involves rerunning existing tests after software changes to check that previously working functionality still behaves correctly. In SmartCare, the full suite of 24 tests was executed after adding the completed-appointment cancellation test.
+
+**7. What does code coverage tell us, and what does it not prove?**
+
+Code coverage measures how much of the program's code is executed during testing. It can help identify areas that have not been exercised by tests.
+
+However, high code coverage does not prove that the software is correct. Tests may execute code without checking the expected behaviour properly. Coverage also does not guarantee that all requirements and boundary conditions have been tested.
+
+**8. What makes an assertion weak?**
+
+An assertion is weak when it checks only a limited result and fails to verify the complete expected behaviour.
+
+For example, checking only that cancelling a completed appointment raises `ValueError` is insufficient. A stronger test also verifies that the appointment remains `COMPLETED` and is still available in the data store.
+
+**9. What is the appropriate role of GitHub Copilot as a test assistant?**
+
+GitHub Copilot can assist with suggesting test scenarios, identifying possible boundary cases and reviewing test ideas.
+
+However, its suggestions must be checked against the actual requirements and existing implementation. The developer remains responsible for selecting appropriate tests, writing meaningful assertions, executing the tests and verifying the results.
+
+For SmartCare, Copilot suggested testing cancellation of a completed appointment. I checked the existing domain rules before implementing and running the test.
 
 10. What is the Stage 7 engineering rule?
-[response]
 
-## O Stage Completion
+The Stage 7 engineering rule is to base tests on the agreed requirements and expected behaviour, not simply on what the current implementation happens to do.
 
-Tested Stage 7 main SHA: [complete]
-Full-suite result: [complete]
-Unresolved defects and effect on baseline: [complete or none]
-Clean working tree and integration evidence: [complete]
-Stage 8 handover status: [complete; no Stage 8 work assigned]
-All tutorial/formative responses and traceability/Copilot decisions complete: [confirm]
+Tests should provide meaningful evidence through clear assertions, including negative and boundary scenarios. Any failure should be investigated to determine whether it is a product defect, test defect or unresolved issue.
+
+The Stage 7 work should also follow the required integration sequence: complete the stage only after the previous applicable stage has been integrated, verified and recorded.
