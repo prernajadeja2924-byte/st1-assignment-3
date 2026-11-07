@@ -643,3 +643,17 @@ The Stage 7 engineering rule is to base tests on the agreed requirements and exp
 Tests should provide meaningful evidence through clear assertions, including negative and boundary scenarios. Any failure should be investigated to determine whether it is a product defect, test defect or unresolved issue.
 
 The Stage 7 work should also follow the required integration sequence: complete the stage only after the previous applicable stage has been integrated, verified and recorded.
+
+## O Stage Completion
+
+**Tested Stage 7 main SHA:** Not yet available. Testing was completed on `feature/appointment-cancellation`, not on the integrated `main` branch. Tested commit: `59111c6f201c249dd6edc5f088af12076ddbc18b`.
+
+**Full-suite result:** 24 passed, 0 failed. Changed-order execution also passed all 24 tests.
+
+**Unresolved defects and effect on baseline:** No product defects were identified by the executed tests. Complete requirements coverage has not been established. Integration into `main` is still pending.
+
+**Clean working tree and integration evidence:** Stage 7 changes were committed and pushed to GitHub, with the latest commit `757c333`. The working tree contains unrelated untracked files. Integration into `main` has not been confirmed.
+
+**Stage 8 handover status:** Pending Stage 7 integration and verification. No Stage 8 work assigned.
+
+**All tutorial/formative responses and traceability/Copilot decisions complete:** Sections A–N prepared. The official acceptance-criterion identifiers remain unverified.
