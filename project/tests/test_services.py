@@ -54,3 +54,61 @@ def test_rejected_lookup_preserves_patient():
         service.find_patient("P999")
 
     assert service.find_patient("P001") is original
+
+
+from smartcare.services import PractitionerService
+
+
+def test_find_registered_practitioner():
+    store = SmartCareDataStore()
+    service = PractitionerService(store)
+
+    original = service.register_practitioner(
+        "D001", "Taylor Smith", "General"
+    )
+    found = service.find_practitioner("D001")
+
+    assert found is original
+    assert found.practitioner_id == "D001"
+    assert found.name == "Taylor Smith"
+
+
+def test_find_practitioner_returns_original_object():
+    store = SmartCareDataStore()
+    service = PractitionerService(store)
+
+    original = service.register_practitioner(
+        "D001", "Taylor Smith", "General"
+    )
+
+    assert service.find_practitioner("D001") is original
+
+
+def test_find_unknown_practitioner():
+    store = SmartCareDataStore()
+    service = PractitionerService(store)
+
+    with pytest.raises(LookupError):
+        service.find_practitioner("D999")
+
+
+def test_find_blank_practitioner_id():
+    store = SmartCareDataStore()
+    service = PractitionerService(store)
+
+    with pytest.raises(ValueError):
+        service.find_practitioner("   ")
+
+
+def test_rejected_practitioner_lookup_preserves_record():
+    store = SmartCareDataStore()
+    service = PractitionerService(store)
+
+    original = service.register_practitioner(
+        "D001", "Taylor Smith", "General"
+    )
+
+    with pytest.raises(LookupError):
+        service.find_practitioner("D999")
+
+    assert service.find_practitioner("D001") is original
