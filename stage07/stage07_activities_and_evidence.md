@@ -646,14 +646,14 @@ The Stage 7 work should also follow the required integration sequence: complete 
 
 ## O Stage Completion
 
-**Tested Stage 7 main SHA:** Not yet available. Testing was completed on `feature/appointment-cancellation`, not on the integrated `main` branch. Tested commit: `59111c6f201c249dd6edc5f088af12076ddbc18b`.
+**Tested Stage 7 main SHA:** `6a7b8f2e0c5c24dee6715c780529910c967d5ad1`
 
-**Full-suite result:** 24 passed, 0 failed. Changed-order execution also passed all 24 tests.
+**Full-suite result:** 24 tests passed, 0 failed, in 0.17 seconds using `python -m pytest` from the `project` directory on the integrated `main` branch.
 
-**Unresolved defects and effect on baseline:** No product defects were identified by the executed tests. Complete requirements coverage has not been established. Integration into `main` is still pending.
+**Unresolved defects and effect on baseline:** No product defects were identified by the executed tests. Complete requirements coverage has not been established, and the official acceptance-criterion identifiers remain unverified.
 
-**Clean working tree and integration evidence:** Stage 7 changes were committed and pushed to GitHub, with the latest commit `757c333`. The working tree contains unrelated untracked files. Integration into `main` has not been confirmed.
+**Clean working tree and integration evidence:** PR #3 (Patient Lookup), PR #4 (Practitioner Lookup) and PR #5 (Appointment Cancellation) were merged into `main`. The integrated suite passed all 24 tests. Unrelated untracked files remain in the local working tree, so a completely clean working tree cannot yet be claimed.
 
-**Stage 8 handover status:** Pending Stage 7 integration and verification. No Stage 8 work assigned.
+**Stage 8 handover status:** Stage 7 implementation and integration testing completed. No Stage 8 work has been assigned.
 
-**All tutorial/formative responses and traceability/Copilot decisions complete:** Sections A–N prepared. The official acceptance-criterion identifiers remain unverified.
+**All tutorial/formative responses and traceability/Copilot decisions complete:** Sections A–N have been prepared, including test design, regression evidence, traceability, Copilot evaluation and formative responses. Complete acceptance-criterion traceability remains unverified.
