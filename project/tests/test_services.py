@@ -116,7 +116,7 @@ def test_rejected_practitioner_lookup_preserves_record():
 
 from datetime import datetime, timedelta
 
-from smartcare.domain import AppointmentStatus
+from smartcare.domain import Appointment, AppointmentStatus
 from smartcare.services import AppointmentService
 
 
@@ -182,3 +182,25 @@ def test_cannot_cancel_twice():
         service.cancel_appointment("A001")
 
     assert appointment.status == AppointmentStatus.CANCELLED
+
+
+def test_cannot_cancel_completed_appointment():
+    service, store, appointment = cancellation_setup()
+
+    # Arrange: create a completed appointment using the domain constructor.
+    completed = Appointment(
+        "A002",
+        appointment.patient,
+        appointment.practitioner,
+        appointment.date_time + timedelta(minutes=30),
+        status=AppointmentStatus.COMPLETED,
+    )
+    store.add_appointment(completed)
+
+    # Act and Assert: cancellation must be rejected.
+    with pytest.raises(ValueError):
+        service.cancel_appointment("A002")
+
+    # Verify that the rejected operation did not change stored data.
+    assert completed.status is AppointmentStatus.COMPLETED
+    assert store.find_appointment("A002") is completed
